@@ -6,7 +6,49 @@
 <body>
 
 <script type="text/javascript">
-    alert('hello-world');
+    function transfer(xiaoshu) { // 转换小于1的小数为二进制
+		//var numList = [];
+		var i, begin, accuracy = 20;
+		var result = '0.';
+		for(i=0,begin=1; i<accuracy; i++) {
+			begin /= 2.0;
+			//numList.push(begin);
+			if(begin > xiaoshu) {
+				result += '0';
+			} else {
+				result += '1';
+				xiaoshu -= begin;
+			}
+		}
+		//console.log(numList);
+		console.log(result)
+		return result;
+	}
+	function transStr2XS(str) { // 转换二进制为小数
+		//var numList = [];
+		var i, begin, accuracy = 20;
+		var result = 0;
+		var index = str.indexOf('.');
+		var list = str.substring(index + 1).split(''); // 取小数点后部分每一个二进制位保存
+		
+		for(i=0,begin=1; i<accuracy; i++) {
+			begin /= 2.0;
+			if(list[i] == '1') result += begin;
+		}
+		
+		return result;
+	}
+	
+	function binaryAdd(a, b) {
+	
+	}
+	
+	var binary1 = transfer(0.2);
+	var binary2 = transfer(0.1);
+	
+	console.log(binary1 + ' ' + binary2)
+	console.log(transStr2XS(binary1) + transStr2XS(binary2))
+	
 </script>
 </body>
 </html>
