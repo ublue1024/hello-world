@@ -4,7 +4,7 @@
 <title>hello-world</title>
 </head>
 <body>
-
+<a href="javascript: 3+4">void test</a>
 <script type="text/javascript">
     function transfer(xiaoshu) { // 转换小于1的小数为二进制
 		//var numList = [];
@@ -39,14 +39,38 @@
 		return result;
 	}
 	
-	function binaryAdd(a, b) {
-	
+	function binaryAdd(a, b) {// 默认a的长度比b长
+		if(a.length < b.length) { //  如果不是，换过来
+			var temp = a;
+			a = b;
+			b = temp;
+		}
+		var len_a = a.length;
+		var len_b = b.length;
+		var temp_val;
+		var borrow = 0, result = 0;
+		var result_list = new Array(len_a);
+		for(var i = len_a-1,j=len_b-1; i >= 0; i--, j--) { // 从后往前逐位做加法，长度不够用0替代
+			temp_val = b[j];
+			if(j<0) temp_val = 0;
+		
+			result = Number(a[i]) + Number(temp_val) + borrow;
+			borrow = 0;
+			if(result > 1) {
+				result -= 2;
+				borrow = 1;
+			} 
+			result_list[i] = result;
+			
+		}
+		return result_list;
 	}
 	
 	var binary1 = transfer(0.2);
 	var binary2 = transfer(0.1);
 	
-	console.log(binary1 + ' ' + binary2)
+	console.log(binary1 + ' ' + binary2);
+	console.log(binaryAdd('101', '110101'));
 	console.log(transStr2XS(binary1) + transStr2XS(binary2))
 	
 </script>
