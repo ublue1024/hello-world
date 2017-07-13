@@ -65,13 +65,241 @@
 		}
 		return result_list;
 	}
+	// 冒泡排序： 基础版本(ps：可设置一个标志位，若本次没有交换则认为已经是排好序的了)
+	Array.prototype.bubble_sort = function() {
+		var i, j, temp;
+		for (i = 0; i < this.length - 1; i++)
+			for (j = 0; j < this.length - 1 - i; j++)
+				if (this[j] > this[j + 1]) {
+					temp = this[j];
+					this[j] = this[j + 1];
+					this[j + 1] = temp;
+				}
+		return this;
+	};
+	// 冒泡排序： 优化版本
+	Array.prototype.bubble_sort2 = function() {
+		var low = 0;   
+		var high= this.length -1; //设置变量的初始值  
+		var tmp,j;  
+		while (low < high) {  
+			for (j= low; j< high; ++j) {//正向冒泡,找到最大者  
+				if (this[j]> this[j+1]) {  
+					tmp = this[j]; 
+					this[j]=this[j+1];
+					this[j+1]=tmp;  
+				}   
+			}
+			--high;                 //修改high值, 前移一位  
+			for ( j=high; j>low; --j) { //反向冒泡,找到最小者  
+				if (this[j]<this[j-1]) {  
+					tmp = this[j]; 
+					this[j]=this[j-1];
+					this[j-1]=tmp;  
+				}  
+			}
+			++low;                  //修改low值,后移一位  
+		}   
+		return this;
+	};
+	
+	function insertSort(list) { // 插入排序A O(n^3) 低效
+		if(!Array.isArray(list)) return;
+		var len = list.length;
+		var i,j,k, temp;
+		
+		for(i = 1; i < len; i++) {
+			temp = list[i]; // 前面的i-1个元素都是有序的
+			for(j = 0; j < i; j++) {
+				if(temp < list[j]) { 
+					for(k=i;k>j;k--) {
+						list[k] = list[k-1];
+					}
+					list[j] = temp;
+					break;
+				}
+			}
+		}
+	}
+	function insertSort2(list) { // 插入排序 O(n^2) 一般的写法
+		if(!Array.isArray(list)) return;
+		var len = list.length;
+		var i,j,k, temp;
+		
+		for(i = 1; i < len; i++) {
+			temp = list[i]; // 前面的i-1个元素都是有序的
+			j = i;
+			while(temp < list[j-1]) {
+				list[j] = list[j-1];
+				j--;
+			}
+			list[j] = temp;
+		}
+	}
+	function insertSort3(a) { // 二分查找插入排序, 在数组很大的情况下是最高效的插入排序
+		if(!Array.isArray(a)) return;
+		var len = a.length;
+		var i,j,k, temp;
+		
+		for(i = 1; i < len; i++) {
+			key = a[i]; 
+			left = 0; 
+			right = i-1; 
+			while(left<=right) { 
+				middle = parseInt((left+right)/2, 10); 
+				if (a[middle]>key) 
+					right = middle-1; 
+				else 
+					left = middle+1; 
+			} 
+			 
+			for(j=i-1; j>=left; j--) 
+			{ 
+				a[j+1] = a[j]; 
+			} 
+			 
+			a[left] = key;       
+			
+		}
+	}
+	// 维基百科推荐写法，最简练
+	Array.prototype.insertion_sort = function() {
+		var i,j;
+		for(i = 1;i < this.length; i++){
+		  for(j = 0;j<i;j++){
+			if(this[j]>this[i]){
+			  this.splice(j,0,this[i]); // 插入一个
+			  this.splice(i+1,1); // 删除一个
+			}
+		 }
+	   }
+		return this;
+	};
+	// 希尔排序：优化后的插入排序
+	Array.prototype.shell_sort = function() {
+		var gap, i, j;
+		var temp;
+		for (gap = this.length >> 1; gap > 0; gap >>= 1) // gap是间隔
+			for (i = gap; i < this.length; i++) {
+				temp = this[i];
+				for (j = i - gap; j >= 0 && this[j] > temp; j -= gap)
+					this[j + gap] = this[j];
+				this[j + gap] = temp;
+			}
+	};
+	// 选择排序
+	Array.prototype.selection_sort = function() {
+		var i, j, min;
+		var temp;
+		for (i = 0; i < this.length - 1; i++) {
+			min = i;
+			for (j = i + 1; j < this.length; j++)
+				if (this[min] > this[j])
+					min = j;
+			temp = this[min];
+			this[min] = this[i];
+			this[i] = temp;
+		}
+	};
+	// 二元选择排序，优化的选择排序
+	Array.prototype.binary_selection_sort = function() {
+		var i, j, min, max;
+		var temp_min, temp_max;
+		var len = this.length;
+		for (i = 0; i < len>>1; i++) {
+			min = i;
+			max = i;
+			for (j = i + 1; j < len-i; j++) {
+				if (this[min] > this[j])
+					min = j;
+				if(this[max] < this[j])
+					max = j;
+			}
+			temp_min = this[min];
+			temp_max = this[max];
+			this[min] = this[i];
+			this[i] = temp_min;
+			this[max] = this[len-1-i];
+			this[len-1-i] = temp_max;
+		}
+	};
+	// 堆排序（大顶堆）
+	Array.prototype.heap_sort = function() {
+		var arr = this.slice(0);
+		function swap(i, j) { // 交换arr[i]和arr[j]
+			var tmp = arr[i];
+			arr[i] = arr[j];
+			arr[j] = tmp;
+		}
+
+		function max_heapify(start, end) { // 调整树结构，start是根，end是最后一个节点下标
+			//建立父節點指標和子節點指標
+			var dad = start;
+			var son = dad * 2 + 1;
+			if (son >= end)//若子節點指標超過範圍直接跳出函數
+				return;
+			if (son + 1 < end && arr[son] < arr[son + 1])//先比較兩個子節點大小，選擇最大的
+				son++;
+			if (arr[dad] <= arr[son]) {//如果父節點小於子節點時，交換父子內容再繼續子節點和孫節點比較
+				swap(dad, son);
+				max_heapify(son, end);
+			}
+		}
+
+		var len = arr.length;
+		//初始化，i從最後一個父節點開始調整
+		for (var i = Math.floor(len / 2) - 1; i >= 0; i--) {
+			max_heapify(i, len);
+		}
+		console.log(arr);
+		//先將第一個元素和已排好元素前一位做交換，再從新調整，直到排序完畢
+		for (var i = len - 1; i > 0; i--) {
+			swap(0, i);
+			max_heapify(0, i);
+			console.log(arr);
+		}
+
+		return arr;
+	};
+	// 快速排序
+	Array.prototype.quick_sort = function() {
+		var len = this.length;
+		if (len <= 1)
+			return this.slice(0);
+		var left = [];
+		var right = [];
+		var mid = [this[0]];
+		for (var i = 1; i < len; i++)
+			if (this[i] < mid[0])
+				left.push(this[i]);
+			else
+				right.push(this[i]);
+		return left.quick_sort().concat(mid.concat(right.quick_sort()));
+	};
+	// 归并排序
+	Array.prototype.merge_sort = function() {
+		var merge = function(left, right) { // 合并
+			var final = [];
+			while (left.length && right.length)
+				final.push(left[0] <= right[0] ? left.shift() : right.shift());
+			return final.concat(left.concat(right));
+		};
+		var len = this.length;
+		if (len < 2) return this;
+		var mid = len / 2;
+		return merge(this.slice(0, parseInt(mid)).merge_sort(), this.slice(parseInt(mid)).merge_sort());
+	};
+	var  list = [5,4,3,2,1,44,6,32,78,51,2];
+	//var  list = [5,4,3];
+	//list.quick_sort();
+	console.log(list.merge_sort());
 	
 	var binary1 = transfer(0.2);
 	var binary2 = transfer(0.1);
 	
 	console.log(binary1 + ' ' + binary2);
 	console.log(binaryAdd('101', '110101'));
-	console.log(transStr2XS(binary1) + transStr2XS(binary2))
+	console.log(transStr2XS(binary1) + transStr2XS(binary2));
 	
 </script>
 </body>
